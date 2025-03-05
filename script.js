@@ -1,4 +1,3 @@
-
 'use strict';
 
 // Selecting elements
@@ -11,13 +10,24 @@ const current1El = document.getElementById('current--1');
 const name0 = document.getElementById('name-input--0');
 const name1 = document.getElementById('name-input--1');
 
-
 const diceEl = document.querySelector('.dice');
 const btnNew = document.querySelector('.btn--new');
 const btnRoll = document.querySelector('.btn--roll');
 const btnHold = document.querySelector('.btn--hold');
 
 let scores, currentScore, activePlayer, playing;
+
+// Function to disable player name input fields
+const disableInputs = function () {
+  name0.disabled = true;
+  name1.disabled = true;
+};
+
+// Function to enable player name input fields
+const enableInputs = function () {
+  name0.disabled = false;
+  name1.disabled = false;
+};
 
 // Starting conditions
 const init = function () {
@@ -36,11 +46,13 @@ const init = function () {
   player1El.classList.remove('player--winner');
   player0El.classList.add('player--active');
   player1El.classList.remove('player--active');
+  
   name0.value = ''; 
   name1.value = ''; 
   document.getElementById('name--0').textContent = 'Player 1';
   document.getElementById('name--1').textContent = 'Player 2';
-  
+
+  enableInputs(); // Allow name change on reset
 };
 init();
 
@@ -55,6 +67,8 @@ const switchPlayer = function () {
 // Rolling dice functionality
 btnRoll.addEventListener('click', function () {
   if (playing) {
+    disableInputs(); // Disable name fields on first roll
+
     // 1. Generating a random dice roll
     const dice = Math.trunc(Math.random() * 6) + 1;
 
@@ -78,9 +92,10 @@ btnRoll.addEventListener('click', function () {
 
 btnHold.addEventListener('click', function () {
   if (playing) {
+    disableInputs(); // Disable name fields when holding
+
     // 1. Add current score to active player's score
     scores[activePlayer] += currentScore;
-    // scores[1] = scores[1] + currentScore
 
     document.getElementById(`score--${activePlayer}`).textContent =
       scores[activePlayer];
@@ -101,7 +116,7 @@ btnHold.addEventListener('click', function () {
         .querySelector(`.player--${activePlayer}`)
         .classList.remove('player--active');
 
-        document.getElementById(`name--${activePlayer}`).textContent = 
+      document.getElementById(`name--${activePlayer}`).textContent =
         `${activePlayer === 0 ? winnerName : winnerName1} Wins! 🏆`;
     } else {
       // Switch to the next player
@@ -110,5 +125,6 @@ btnHold.addEventListener('click', function () {
   }
 });
 
-btnNew.addEventListener('click', init);
- 
+btnNew.addEventListener('click', function () {
+  init();
+});
